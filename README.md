@@ -49,7 +49,7 @@ This is a RAG chatbot built with llamaindex, with an OpenAI compative API writte
    - at this point, should should be good to run the script by typing `python chat_server.py` in a terminal
    - the script will create an OpenAI compatible API for your RAG on locahost
    - you might want to make sure that your firewall is not blocking connections to localhost and whatever port you chose
-   - the the API server with `test_API.ipynb`:
+   - test the API server with `test_API.ipynb`:
       - in the notebook, set the API server key (`API_KEY`) and base URL (`BASE_URL`) to whatever you picked in step 4
 6. If you are using this with Obsidian Text Generator:
     - in TG LLM settings, choose OpenAI as a model provider
