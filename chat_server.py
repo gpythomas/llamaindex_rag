@@ -3,7 +3,6 @@
 
 import os
 import requests
-import logging
 from llama_index.core import VectorStoreIndex
 from llama_index.vector_stores.chroma import ChromaVectorStore
 import chromadb
@@ -16,12 +15,12 @@ from llama_index.embeddings.openai import OpenAIEmbedding
 # Flask API
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-#from flask_cors import CORS
 from functools import wraps
 import uuid
 import time
-# Logging
-logging.basicConfig(filename='record.log', level=logging.DEBUG)
+
+import logging
+logging.basicConfig(filename='chat_server.log', level=logging.DEBUG)
 
 # Openai API key
 openai.api_key = os.environ["OPENAI_API_KEY"]
@@ -57,13 +56,13 @@ def llm(model="microsoft/wizardlm-2-8x22b", max_tokens=600, temperature=1, top_p
 index = None
 def initialize_index():
     global index
-    collection_name = "Your_collection_name"
+    collection_name = "MyCollection"
     db = chromadb.PersistentClient(path="./chroma_db")
     chroma_collection = db.get_or_create_collection(collection_name)
     vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
     index = VectorStoreIndex.from_vector_store(
         vector_store,
-        embed_model=embed_model,
+        embed_model=embed_model
     )
 
 # Create chat engine
@@ -93,8 +92,8 @@ CORS(app, resources={r"/*": {"origins": "*"}}) # Configure CORS for the entire a
 #    response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
 #    return response
 
-# Example API key for authentication; that's the localhost API key, not the chat model or embedding model API key
-API_KEY = "you_api_key_here"
+# Example API key for authentication
+API_KEY = "my_chat_server_key"
 
 def require_api_key(f):
     @wraps(f)
@@ -172,7 +171,9 @@ def chat_completions():
         choices = []
 
         # Initialize variables to store the latest system prompt and user message
-        latest_system_prompt = "You are a chatbot."
+
+        latest_system_prompt = "You are a helpful and friendly chatbot"
+
         latest_user_message = None
 
         for i, message in enumerate(data['messages']):
