@@ -1,7 +1,7 @@
 # llamaindex_rag
 This is a RAG chatbot built with llamaindex, with an OpenAI compative API written in Flask. It should work with Obsidian's [Text Generator plugin](https://github.com/nhaouari/obsidian-textgenerator-plugin) by selecting `OpenAI Chat` as LLM provider in the plugin settings.  
 
-**Note: this is a chatbot that I used specifically to interact with Obsidian Text Generator's plugin on my desktop. The API server is meant to run on localhost in a private network. No encryption has been implemented. The `chat_server.py` server script is not meant to serve the API on the web (use at your own risk).**
+**Note: this is a chatbot that I built specifically to interact with Obsidian Text Generator's plugin on my desktop on my private network. The API server is meant to run on localhost in a private network. No encryption has been implemented (yet). The `chat_server.py` server script is not meant to serve the API on the web (use at your own risk).**
 
 ## How to use, short version:
 
