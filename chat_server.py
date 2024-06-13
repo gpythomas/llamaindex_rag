@@ -79,7 +79,7 @@ def chat_with_data(model, system_prompt, messages, max_tokens, temperature, top_
     #https://docs.llamaindex.ai/en/stable/examples/memory/ChatSummaryMemoryBuffer/
     memory = ChatMemoryBuffer.from_defaults(chat_history=[ChatMessage(role=m.get('role'), content=m.get('content')) for m in messages])
     chat_engine = index.as_chat_engine(
-        chat_mode="openai",
+        chat_mode="best",
         llm=llm(model, max_tokens, temperature, top_p, top_k, frequency_penalty, presence_penalty, repetition_penalty, min_p, top_a),
         memory=memory,
         system_prompt = system_prompt,
