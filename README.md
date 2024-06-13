@@ -12,4 +12,4 @@ How to use:
    - Optional: test the API server with `test_db.ipynb`
 4. If using Obsidian Text Generator, set your LLM provider as OpenAI and enter the chatbot API information there
 
-See [here](How to.md) for more detailed instructions.    
+See [here](Howto.md) for more detailed instructions.    
