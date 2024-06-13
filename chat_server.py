@@ -1,26 +1,31 @@
 # https://docs.llamaindex.ai/en/stable/understanding/putting_it_all_together/apps/fullstack_app_guide/
 # https://docs.llamaindex.ai/en/stable/examples/chat_engine/chat_engine_openai/
 
+# General
 import os
 import requests
+import logging
+# Llamaindex general
 from llama_index.core import VectorStoreIndex
-from llama_index.vector_stores.chroma import ChromaVectorStore
-import chromadb
-from llama_index.core import Settings
 from llama_index.core.memory import ChatMemoryBuffer 
-# Openai and openrouter
+from llama_index.core.llms import ChatMessage
+# Chroma DB
+import chromadb
+from llama_index.vector_stores.chroma import ChromaVectorStore
+from llama_index.core import Settings
+# Ollama, Openai and openrouter
 import openai
-from llama_index.llms.openrouter import OpenRouter
 from llama_index.embeddings.openai import OpenAIEmbedding
+from llama_index.llms.openrouter import OpenRouter
+#from llama_index.embeddings.ollama import OllamaEmbedding
 # Flask API
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from functools import wraps
 import uuid
 import time
-
-import logging
-logging.basicConfig(filename='chat_server.log', level=logging.DEBUG)
+# Logging
+logging.basicConfig(filename='record.log', level=logging.DEBUG)
 
 # Openai API key
 openai.api_key = os.environ["OPENAI_API_KEY"]
@@ -69,13 +74,17 @@ def initialize_index():
 # https://docs.llamaindex.ai/en/stable/module_guides/deploying/chat_engines/
 # https://docs.llamaindex.ai/en/latest/examples/chat_engine/chat_engine_context/
 
-def chat_with_data(model, system_prompt, max_tokens, temperature, top_p, top_k, frequency_penalty, presence_penalty, repetition_penalty, min_p, top_a):
-    memory = ChatMemoryBuffer.from_defaults(token_limit=1500)
+#def chat_with_data(model, system_prompt, max_tokens, temperature, top_p, top_k, frequency_penalty, presence_penalty, repetition_penalty, min_p, top_a):
+def chat_with_data(model, system_prompt, messages, max_tokens, temperature, top_p, top_k, frequency_penalty, presence_penalty, repetition_penalty, min_p, top_a):
+    #https://docs.llamaindex.ai/en/stable/examples/memory/ChatSummaryMemoryBuffer/
+    memory = ChatMemoryBuffer.from_defaults(chat_history=[ChatMessage(role=m.get('role'), content=m.get('content')) for m in messages])
     chat_engine = index.as_chat_engine(
-        chat_mode="context",
+        chat_mode="openai",
         llm=llm(model, max_tokens, temperature, top_p, top_k, frequency_penalty, presence_penalty, repetition_penalty, min_p, top_a),
         memory=memory,
-        system_prompt = system_prompt
+        system_prompt = system_prompt,
+        #node_postprocessors=[SentenceEmbeddingOptimizer(threshold_cutoff=0.5)],
+        similarity_top_k=5
     )
     return chat_engine
 
@@ -172,37 +181,31 @@ def chat_completions():
 
         # Initialize variables to store the latest system prompt and user message
 
-        latest_system_prompt = "You are a helpful and friendly chatbot"
-
+        system_prompt = "You are a helpful bot."
         latest_user_message = None
 
-        for i, message in enumerate(data['messages']):
-            role = message.get('role')
-            content = message.get('content')
-            
-            if role == 'system':
-                # Update the latest system prompt
-                latest_system_prompt = content
-            elif role == 'user':
-                # Update the latest user message
-                latest_user_message = content
-                
-                # Initialize the chat engine using the chat_with_data function
-                chat_engine = chat_with_data(model, latest_system_prompt, max_tokens, temperature, top_p, top_k, frequency_penalty, presence_penalty, repetition_penalty, min_p, top_a)
-                
-                # Generate the response
-                response_content = chat_engine.chat(latest_user_message).response
-                
-                choice = {
-                    "index": i,
-                    "message": {
-                        "role": "assistant",
-                        "content": response_content
-                    },
-                    "finish_reason": "stop"
-                }
-                
-                choices.append(choice)
+        if system_messages:
+            system_prompt = (r'\n').join(system_messages)
+        
+        if user_messages:
+            latest_user_message = user_messages[-1]
+
+        # Initialize the chat engine using the chat_with_data function
+        chat_engine = chat_with_data(model, system_prompt, data['messages'], max_tokens, temperature, top_p, top_k, frequency_penalty, presence_penalty, repetition_penalty, min_p, top_a)
+
+        response_content = chat_engine.chat(latest_user_message).response
+
+        # https://platform.openai.com/docs/guides/text-generation/chat-completions-api
+        choice = {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": response_content
+            },
+            "finish_reason": "stop"
+        }
+        
+        choices.append(choice)
 
         response = {
             "id": str(uuid.uuid4()),  # Generate a unique ID
