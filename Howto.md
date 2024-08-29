@@ -1,10 +1,9 @@
 # How to use, long version
 
-1. Create a python virtual environment and activate it: [venv — Creation of virtual environments](https://docs.python.org/3/library/venv.html)
-2. Install the python depencies using requirements file: [How to install Python packages with pip and requirements.txt](https://note.nkmk.me/en/python-pip-install-requirements/)
-   - you should also install the following packages, which were not captured by pipreqs:
-      - `llama-index-vector-stores-chroma`
-      - `llama_index.llms.openrouter`
+1. Create a python virtual environment and activate it: [venv — Creation of virtual environments](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#create-and-use-virtual-environments)
+2. Install the python depencies using requirements file:
+   - [Install/upgrade pip](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#prepare-pip)
+   - [Install packages using requirements.txt](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#using-a-requirements-file)
 3. Use `create_db.py` to create your vector storage and test it:
    - put the documents you'd like to add to your vector storage inside rag_docs; plain text is easier than PDF, see [PDF Hell and Practical RAG Applications](https://unstract.com/blog/pdf-hell-and-practical-rag-applications/). I like [PyMuPDF](https://pymupdf.readthedocs.io) for text extraction.
    - open the script and adjust the configuration:
