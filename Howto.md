@@ -13,7 +13,7 @@
       - you can configure parser choice, chunk size and overlap with the variable `parser`, see [Node Parser Usage Pattern](https://docs.llamaindex.ai/en/stable/module_guides/loading/node_parsers/) 
    - run the script
    - test the vector storage with the `test_db.ipynb` notebook:
-          - here is some information on how to run python notebooks in VSCode: [Jupyter Notebooks in VS Code](https://code.visualstudio.com/docs/datascience/jupyter-notebooks)
+     - here is some information on how to run python notebooks in VSCode: [Jupyter Notebooks in VS Code](https://code.visualstudio.com/docs/datascience/jupyter-notebooks)
 4. Open `chat_server.py` and adjust the configuration:
    - at that point, you should have a chroma_db subfolder in your app folder; this was created in step 3 and contains your vector storage
    - before you run the `chat_server.py` script, you should open it and adjust the configuration:
