@@ -3,7 +3,7 @@ name = "llamaindex_rag"
 version = "0.1.0"
 description = "Default template for PDM package"
 authors = [
-    {name = "Guillaume Thomas", email = "gpythomas@gmail.com"},
+    {name = "Guillaume Thomas"},
 ]
 dependencies = [
     "requests>=2.32.3",
